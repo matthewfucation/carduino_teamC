@@ -1,0 +1,79 @@
+int Rspeed, Lspeed, Rbrake, Lbrake, Rdir, Ldir,
+    trigPin, echoPin, distance,
+    speakamt, speakerpin;
+//channel A is Lwheel
+void setup() {
+  
+  speakerpin = A0;
+  Rspeed = 11;
+  Lspeed = 3;
+  Rbrake = 8;
+  Lbrake = 9;
+  Rdir = 13;
+  Ldir =  12;
+  trigPin = 6;
+  echoPin = 7;
+  //Setup Channel A
+  pinMode(Ldir, OUTPUT);
+  pinMode(Lbrake, OUTPUT);
+
+  //Setup Channel B
+  pinMode(Rdir, OUTPUT);
+  pinMode(Rbrake, OUTPUT);
+  
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  
+  //don't pinMode L&Rspeed
+  
+}
+
+int CheckDistance()
+{
+  long duration, dist;
+  digitalWrite(trigPin, LOW);  // Added this line
+  delayMicroseconds(2); // Added this line
+
+  digitalWrite(trigPin, HIGH);
+//  delayMicroseconds(1000); - Removed this line
+  delayMicroseconds(10); // Added this line
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  dist = (duration/2) / 29.1;
+  
+  return dist;
+}
+
+void loop()
+{
+   int testDistance = CheckDistance(); /// get object distance using ping
+   
+   /// if object is more than 50 cm away it is out of range
+    if (testDistance >= 50 || testDistance <= 0) /// if object is more than 50 cm away it is out of range
+    {
+    Serial.println("Out of range");
+    }
+    else /// object is closer than 50cm, prit distance
+    {
+    Serial.print(testDistance);
+    Serial.println(" cm");
+    }
+   
+  delay(50); ///wait half a sec before next ping
+  
+ if(distance < 2000)
+  {    
+    digitalWrite(Ldir, LOW);
+    analogWrite(Lspeed, 255);
+    analogWrite(Rspeed, 255);
+    delay(1000);
+  }
+  else
+  {
+    digitalWrite(Ldir, HIGH);
+    digitalWrite(Rdir, LOW);
+    analogWrite(Lspeed, 255);
+    analogWrite(Rspeed, 255);
+  }
+}
